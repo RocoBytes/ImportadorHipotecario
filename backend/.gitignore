@@ -1,0 +1,34 @@
+# Archivos de entorno
+.env
+.env.local
+.env.*.local
+
+# Dependencias
+node_modules/
+dist/
+build/
+
+# Archivos de log
+*.log
+npm-debug.log*
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Archivos temporales y uploads
+uploads/
+temp/
+
+# Coverage
+coverage/
+.nyc_output/
+
+# TypeScript
+*.tsbuildinfo
