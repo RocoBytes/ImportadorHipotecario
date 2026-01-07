@@ -8,6 +8,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiConsumes, ApiBody } from '@nestjs/swagger';
 import { ImportService } from './import.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -16,8 +17,10 @@ import { GetUser } from '../auth/decorators/get-user.decorator';
 import { User, UserRole } from '../users/entities/user.entity';
 import { ImportResultDto } from './dto/import-result.dto';
 
+@ApiTags('import')
 @Controller('import')
 @UseGuards(JwtAuthGuard, RolesGuard)
+@ApiBearerAuth('JWT-auth')
 export class ImportController {
   constructor(private readonly importService: ImportService) {}
 
@@ -44,6 +47,41 @@ export class ImportController {
       },
     }),
   )
+  @ApiOperation({ 
+    summary: 'Importar CSV de operaciones',
+    description: 'Procesa un archivo CSV con operaciones hipotecarias. Crea usuarios vendedores automáticamente y asocia las operaciones. Solo accesible para usuarios ADMIN. Tamaño máximo: 10MB.'
+  })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'Archivo CSV con operaciones hipotecarias',
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+          description: 'Archivo CSV con formato específico (delimitador: punto y coma)',
+        },
+      },
+    },
+  })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Importación exitosa',
+    type: ImportResultDto,
+  })
+  @ApiResponse({ 
+    status: 400, 
+    description: 'Archivo inválido o formato incorrecto' 
+  })
+  @ApiResponse({ 
+    status: 401, 
+    description: 'No autenticado' 
+  })
+  @ApiResponse({ 
+    status: 403, 
+    description: 'No autorizado (solo ADMIN)' 
+  })
   async uploadFile(
     @UploadedFile() file: Express.Multer.File,
     @GetUser() user: User,
@@ -66,6 +104,36 @@ export class ImportController {
    */
   @Get('logs')
   @Roles(UserRole.ADMIN)
+  @ApiOperation({ 
+    summary: 'Obtener historial de importaciones',
+    description: 'Devuelve el registro completo de todas las importaciones realizadas. Solo accesible para ADMIN.'
+  })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Lista de importaciones',
+    schema: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          id: { type: 'number', example: 1 },
+          fecha: { type: 'string', format: 'date-time', example: '2024-01-15T10:30:00Z' },
+          usuario: { type: 'string', example: 'admin@empresa.cl' },
+          operacionesImportadas: { type: 'number', example: 1523 },
+          usuariosCreados: { type: 'number', example: 45 },
+          estado: { type: 'string', enum: ['exitoso', 'fallido'], example: 'exitoso' },
+        }
+      }
+    }
+  })
+  @ApiResponse({ 
+    status: 401, 
+    description: 'No autenticado' 
+  })
+  @ApiResponse({ 
+    status: 403, 
+    description: 'No autorizado (solo ADMIN)' 
+  })
   async getImportLogs(@GetUser() user: User) {
     // Admins pueden ver todos los logs
     return await this.importService.getImportLogs();
@@ -78,6 +146,35 @@ export class ImportController {
    */
   @Get('my-logs')
   @Roles(UserRole.ADMIN)
+  @ApiOperation({ 
+    summary: 'Obtener mis importaciones',
+    description: 'Devuelve el registro de importaciones realizadas por el usuario actual. Solo accesible para ADMIN.'
+  })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Lista de mis importaciones',
+    schema: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          id: { type: 'number', example: 1 },
+          fecha: { type: 'string', format: 'date-time', example: '2024-01-15T10:30:00Z' },
+          operacionesImportadas: { type: 'number', example: 1523 },
+          usuariosCreados: { type: 'number', example: 45 },
+          estado: { type: 'string', enum: ['exitoso', 'fallido'], example: 'exitoso' },
+        }
+      }
+    }
+  })
+  @ApiResponse({ 
+    status: 401, 
+    description: 'No autenticado' 
+  })
+  @ApiResponse({ 
+    status: 403, 
+    description: 'No autorizado (solo ADMIN)' 
+  })
   async getMyImportLogs(@GetUser() user: User) {
     return await this.importService.getImportLogs(user.id);
   }
