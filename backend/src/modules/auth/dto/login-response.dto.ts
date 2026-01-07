@@ -1,4 +1,4 @@
-import { UserRole } from '../../users/entities/user.entity';
+import { UserRoleType } from '../../users/entities/user.entity';
 
 export class LoginResponseDto {
   accessToken: string;
@@ -6,6 +6,6 @@ export class LoginResponseDto {
   user: {
     id: string;
     rut: string;
-    rol: UserRole;
+    rol: UserRoleType;
   };
 }

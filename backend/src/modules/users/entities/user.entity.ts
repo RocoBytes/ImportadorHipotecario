@@ -6,10 +6,13 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-export enum UserRole {
-  ADMIN = 'ADMIN',
-  VENDEDOR = 'VENDEDOR',
-}
+// Constantes para roles (evita problemas con enum en Node.js)
+export const UserRole = {
+  ADMIN: 'ADMIN',
+  VENDEDOR: 'VENDEDOR',
+} as const;
+
+export type UserRoleType = typeof UserRole[keyof typeof UserRole];
 
 @Entity('users')
 export class User {
@@ -27,9 +30,9 @@ export class User {
 
   @Column({
     type: 'enum',
-    enum: UserRole,
+    enum: ['ADMIN', 'VENDEDOR'],
   })
-  rol: UserRole;
+  rol: UserRoleType;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

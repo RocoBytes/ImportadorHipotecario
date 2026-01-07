@@ -18,7 +18,7 @@ export const getDatabaseConfig = (): TypeOrmModuleOptions => {
     password: process.env.DB_PASSWORD || 'admin',
     database: process.env.DB_DATABASE || 'mutuos_db',
     entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-    synchronize: process.env.NODE_ENV !== 'production', // Solo en desarrollo
+    synchronize: false, // IMPORTANTE: Usar schema.sql en lugar de auto-sync
     logging: process.env.NODE_ENV !== 'production',
     
     // Configuración SSL condicional
