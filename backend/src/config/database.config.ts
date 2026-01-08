@@ -28,18 +28,22 @@ export const getDatabaseConfig = (): TypeOrmModuleOptions => {
         }
       : false,
 
-    // Pool de conexiones
+    // Pool de conexiones (configuración optimizada para Supabase Pooler)
     extra: {
-      max: 10, // Máximo de conexiones
-      min: 2,  // Mínimo de conexiones
-      idleTimeoutMillis: 30000, // Tiempo antes de cerrar conexiones inactivas
-      // Forzar IPv4 para evitar problemas de conexión con Supabase en Render
-      host: process.env.DB_HOST || 'localhost',
-      connectionTimeoutMillis: 10000,
+      max: 5, // Máximo de conexiones (reducido para pooler)
+      min: 1,  // Mínimo de conexiones
+      idleTimeoutMillis: 30000,
+      connectionTimeoutMillis: 20000, // Aumentado para conexiones lentas
+      query_timeout: 30000,
+      statement_timeout: 30000,
     },
 
-    // Retry de conexión
-    retryAttempts: 3,
-    retryDelay: 3000,
+    // Retry de conexión (aumentado para Render cold starts)
+    retryAttempts: 5,
+    retryDelay: 5000,
+    
+    // Timeouts adicionales
+    connectTimeoutMS: 20000,
+    acquireTimeoutMillis: 30000,
   };
 };
