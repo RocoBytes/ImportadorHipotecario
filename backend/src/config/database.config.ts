@@ -42,8 +42,7 @@ export const getDatabaseConfig = (): TypeOrmModuleOptions => {
     retryAttempts: 5,
     retryDelay: 5000,
     
-    // Timeouts adicionales
+    // Timeout adicional
     connectTimeoutMS: 20000,
-    acquireTimeoutMillis: 30000,
   };
 };
