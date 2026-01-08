@@ -22,10 +22,16 @@ async function bootstrap() {
     ? process.env.FRONTEND_URL.split(',').map(url => url.trim())
     : ['http://localhost:5173', 'http://localhost:5174'];
 
+  console.log('🔍 DEBUG CORS:');
+  console.log('   FRONTEND_URL:', process.env.FRONTEND_URL);
+  console.log('   Allowed origins:', allowedOrigins);
+
   app.enableCors({
     origin: (origin, callback) => {
       // Permitir requests sin origin (Postman, mobile apps, etc.)
       if (!origin) return callback(null, true);
+      
+      console.log('   Checking origin:', origin, '| Allowed?', allowedOrigins.includes(origin));
       
       if (allowedOrigins.includes(origin)) {
         callback(null, true);
