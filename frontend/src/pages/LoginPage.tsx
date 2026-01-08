@@ -128,7 +128,7 @@ const LoginPage: React.FC = () => {
 
         {/* Footer */}
         <div className="mt-8 text-center text-blue-100 text-sm">
-          <p>&copy; 2025 Sistema de Gestión de Mutuos</p>
+          <p>&copy; 2026 Sistema de Gestión de Mutuos</p>
         </div>
       </div>
     </div>

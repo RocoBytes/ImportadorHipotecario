@@ -1,5 +1,23 @@
 # 🔒 Guía de Seguridad para Despliegue en Producción
 
+## ⚡ Verificación Rápida de Seguridad
+
+Antes de desplegar, ejecuta:
+
+```bash
+cd backend
+npm run security:check
+```
+
+Este script verifica automáticamente:
+
+- ✅ JWT_SECRET con longitud y formato seguro
+- ✅ Variables de entorno críticas configuradas
+- ✅ Dependencias de seguridad instaladas
+- ✅ .env no expuesto en Git
+
+---
+
 ## ✅ Lista de Verificación de Seguridad
 
 ### 1. Variables de Entorno (CRÍTICO)
@@ -15,8 +33,10 @@ DB_PASSWORD=TU_PASSWORD_SUPABASE_AQUI
 DB_DATABASE=postgres
 DB_SSL=true
 
-# JWT - GENERAR NUEVO SECRETO
-JWT_SECRET=GENERAR_CON_COMANDO_ABAJO
+# JWT - ⚠️ CRÍTICO: Generar secret único criptográficamente seguro
+# NUNCA usar el mismo secret en desarrollo y producción
+# NUNCA compartir este secret en repositorios públicos
+JWT_SECRET=GENERAR_CON_COMANDO_ABAJO_128_CARACTERES
 JWT_EXPIRATION=7d
 
 # BCrypt
@@ -25,14 +45,26 @@ BCRYPT_ROUNDS=10
 # Servidor
 PORT=10000
 NODE_ENV=production
-FRONTEND_URL=https://tu-app.vercel.app,https://tu-dominio.com
+
+# CORS - URLs permitidas (separadas por coma)
+# Incluir todos los dominios desde donde se accederá a la API
+FRONTEND_URL=https://tu-app.vercel.app,https://www.tu-app.vercel.app
 ```
 
-**Generar JWT_SECRET seguro:**
+**🔐 Generar JWT_SECRET seguro (128 caracteres hexadecimales):**
 
 ```bash
+# Ejecutar en terminal para generar un secret criptográficamente seguro
 node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+
+# Resultado ejemplo (NO USAR ESTE, genera el tuyo):
+# 882aa4d36b47c426feddd9c24cd2df9502bc954fdf70701a4a93cbfe9cf94607a19be83d5ab90dc400ed1e0fc905b12d7de16061bb25a066388394738fb58e8a
 ```
+
+**📋 Copiar el resultado y pegarlo en:**
+
+- Render: Dashboard → Environment → JWT_SECRET
+- Local: backend/.env → JWT_SECRET
 
 #### Frontend (Vercel)
 
@@ -44,7 +76,13 @@ VITE_API_URL=https://tu-backend.onrender.com/api
 
 ## 🛡️ Medidas de Seguridad Implementadas
 
-### 1. **CORS (Cross-Origin Resource Sharing)**
+### 1. **JWT Authentication**
+
+✅ **Secret Criptográfico** - 128 caracteres hexadecimales (64 bytes)
+✅ **Expiración** - Tokens expiran en 7 días por defecto
+✅ **Validación automática** - Estrategia Passport verifica cada request
+
+### 2. **CORS (Cross-Origin Resource Sharing)**
 
 ✅ **Configurado** - Solo acepta requests desde orígenes permitidos
 

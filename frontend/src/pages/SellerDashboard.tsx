@@ -5,7 +5,6 @@ import {
   LogOut, 
   Search, 
   FileText,
-  Calendar,
   User as UserIcon,
   AlertCircle,
   Loader2,
@@ -303,7 +302,7 @@ const SellerDashboard: React.FC = () => {
               <div>
                 <p className="text-sm text-gray-600">Vendedor</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {operations.length > 0 ? operations[0].nombreVendedor : user?.name || 'N/A'}
+                  {operations.length > 0 ? operations[0].nombreVendedor : user?.rut || 'N/A'}
                 </p>
               </div>
             </div>

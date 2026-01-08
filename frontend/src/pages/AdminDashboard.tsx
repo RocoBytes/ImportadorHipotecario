@@ -160,10 +160,7 @@ const AdminDashboard: React.FC = () => {
                   />
                   <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                   <p className="text-gray-600 mb-2">
-                    Haz clic para seleccionar un archivo CSV
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    o arrastra y suelta aquí
+                    Haz clic para seleccionar un archivo CSV en tu equipo e importarlo
                   </p>
                 </label>
               ) : (
@@ -234,16 +231,16 @@ const AdminDashboard: React.FC = () => {
                   {result.success && (
                     <div className="grid grid-cols-2 gap-2 text-sm text-green-700">
                       <div>
-                        <span className="font-medium">Registros parseados:</span> {result.totalParsed}
+                        <span className="font-medium">Registros parseados</span> {result.totalParsed}
                       </div>
                       <div>
-                        <span className="font-medium">Registros filtrados (Vigente):</span> {result.totalFiltered}
+                        <span className="font-medium">Registros filtrados</span> {result.totalFiltered}
                       </div>
                       <div>
-                        <span className="font-medium">Nuevos usuarios creados:</span> {result.newUsers}
+                        <span className="font-medium">Nuevos usuarios creados</span> {result.newUsers}
                       </div>
                       <div>
-                        <span className="font-medium">Operaciones importadas:</span> {result.recordsImported}
+                        <span className="font-medium">Operaciones importadas</span> {result.recordsImported}
                       </div>
                     </div>
                   )}
@@ -275,10 +272,19 @@ const AdminDashboard: React.FC = () => {
           <div className="mt-6 p-4 bg-blue-50 rounded-lg">
             <h3 className="font-medium text-blue-900 mb-2">Formato del archivo CSV:</h3>
             <ul className="text-sm text-blue-800 space-y-1">
-              <li>• Delimitador: punto y coma (;)</li>
-              <li>• Columnas requeridas: RUT Ejecutivo, Estado Mutuo, ID Mutuo, Fecha Escritura, Valor Venta, RUT Cliente, Nombre Cliente</li>
-              <li>• Solo se importarán registros con Estado Mutuo = "Vigente"</li>
-              <li>• Los usuarios (ejecutivos) se crearán automáticamente si no existen</li>
+              <li>• Delimitador: Archivo .csv</li>
+              <li>
+                • Columnas requeridas:{' '}
+                <a 
+                  href="/ArchivoCSV_UTF-8.csv" 
+                  download="ArchivoCSV_UTF-8.csv"
+                  className="text-blue-600 hover:text-blue-800 underline font-medium"
+                >
+                  descargar el siguiente archivo .csv
+                </a>
+                {' '}y completar según lo indicado en ejemplo
+              </li>
+              <li>• Los usuarios (vendedores) se crearán automáticamente si no existen</li>
             </ul>
           </div>
         </div>
