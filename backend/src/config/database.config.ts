@@ -30,12 +30,12 @@ export const getDatabaseConfig = (): TypeOrmModuleOptions => {
 
     // Pool de conexiones (configuración optimizada para Supabase Pooler)
     extra: {
-      max: 5, // Máximo de conexiones (reducido para pooler)
-      min: 1,  // Mínimo de conexiones
-      idleTimeoutMillis: 30000,
-      connectionTimeoutMillis: 20000, // Aumentado para conexiones lentas
-      query_timeout: 30000,
-      statement_timeout: 30000,
+      max: 3, // Reducido aún más para pooler
+      min: 1,
+      idleTimeoutMillis: 60000,
+      connectionTimeoutMillis: 30000, // 30 segundos
+      query_timeout: 60000, // 60 segundos
+      statement_timeout: 60000, // 60 segundos
     },
 
     // Retry de conexión (aumentado para Render cold starts)
@@ -43,6 +43,6 @@ export const getDatabaseConfig = (): TypeOrmModuleOptions => {
     retryDelay: 5000,
     
     // Timeout adicional
-    connectTimeoutMS: 20000,
+    connectTimeoutMS: 30000, // 30 segundos
   };
 };
