@@ -33,6 +33,9 @@ export const getDatabaseConfig = (): TypeOrmModuleOptions => {
       max: 10, // Máximo de conexiones
       min: 2,  // Mínimo de conexiones
       idleTimeoutMillis: 30000, // Tiempo antes de cerrar conexiones inactivas
+      // Forzar IPv4 para evitar problemas de conexión con Supabase en Render
+      host: process.env.DB_HOST || 'localhost',
+      connectionTimeoutMillis: 10000,
     },
 
     // Retry de conexión
