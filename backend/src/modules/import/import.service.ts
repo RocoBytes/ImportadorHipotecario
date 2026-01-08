@@ -216,27 +216,60 @@ export class ImportService {
     if (rutsToCreate.length > 0) {
       console.log(`   Creando ${rutsToCreate.length} usuarios nuevos...`);
 
-      const bcryptRounds = parseInt(process.env.BCRYPT_ROUNDS || '10', 10);
+      const bcryptRounds = 8; // Reducido a 8 para ser más rápido (aún seguro)
+      const BATCH_SIZE = 100; // Aumentado a 100
 
-      for (const rut of rutsToCreate) {
-        try {
-          // Generar password temporal basada en el RUT
-          // Primeros 4 dígitos + último dígito (verificador)
+      for (let i = 0; i < rutsToCreate.length; i += BATCH_SIZE) {
+        const batch = rutsToCreate.slice(i, i + BATCH_SIZE);
+        console.log(`   📦 Lote ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(rutsToCreate.length / BATCH_SIZE)} (${batch.length} usuarios)...`);
+
+        // Hashear passwords en paralelo
+        const hashPromises = batch.map(async (rut) => {
           const tempPassword = this.generatePasswordFromRut(rut);
           const tempPasswordHash = await bcrypt.hash(tempPassword, bcryptRounds);
+          return { rut, passwordHash: tempPasswordHash };
+        });
 
-          const newUser = this.userRepository.create({
-            rut,
-            passwordHash: tempPasswordHash,
-            rol: UserRole.VENDEDOR,
-            mustChangePassword: true,
+        try {
+          const hashedData = await Promise.all(hashPromises);
+          
+          const usersToCreate = hashedData.map(({ rut, passwordHash }) =>
+            this.userRepository.create({
+              rut,
+              passwordHash,
+              rol: UserRole.VENDEDOR,
+              mustChangePassword: true,
+            }),
+          );
+
+          // Guardar el lote completo
+          const savedUsers = await this.userRepository.save(usersToCreate);
+          savedUsers.forEach((savedUser) => {
+            userMap.set(savedUser.rut, savedUser.id);
+            createdCount++;
           });
-
-          const savedUser = await this.userRepository.save(newUser);
-          userMap.set(rut, savedUser.id);
-          createdCount++;
+          
+          console.log(`   ✅ Lote guardado: ${savedUsers.length} usuarios`);
         } catch (error) {
-          console.error(`   Error creando usuario ${rut}:`, error.message);
+          console.error(`   ⚠️ Error en lote, procesando individualmente:`, error.message);
+          // Fallback: uno por uno
+          for (const rut of batch) {
+            try {
+              const tempPassword = this.generatePasswordFromRut(rut);
+              const tempPasswordHash = await bcrypt.hash(tempPassword, bcryptRounds);
+              const newUser = this.userRepository.create({
+                rut,
+                passwordHash: tempPasswordHash,
+                rol: UserRole.VENDEDOR,
+                mustChangePassword: true,
+              });
+              const savedUser = await this.userRepository.save(newUser);
+              userMap.set(rut, savedUser.id);
+              createdCount++;
+            } catch (e) {
+              console.error(`   ❌ Error usuario ${rut}:`, e.message);
+            }
+          }
         }
       }
     }
