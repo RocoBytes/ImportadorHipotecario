@@ -28,21 +28,23 @@ export const getDatabaseConfig = (): TypeOrmModuleOptions => {
         }
       : false,
 
-    // Pool de conexiones (configuración optimizada para Supabase Pooler)
+    // Pool de conexiones (optimizado para Session pooler - más estable)
     extra: {
-      max: 3, // Reducido aún más para pooler
+      max: 5, // Session pooler permite más conexiones
       min: 1,
-      idleTimeoutMillis: 60000,
-      connectionTimeoutMillis: 30000, // 30 segundos
-      query_timeout: 60000, // 60 segundos
-      statement_timeout: 60000, // 60 segundos
+      idleTimeoutMillis: 120000, // 2 minutos
+      connectionTimeoutMillis: 60000, // 60 segundos
+      query_timeout: 120000, // 2 minutos (queries lentas en cold start)
+      statement_timeout: 120000, // 2 minutos
+      keepAlive: true, // Mantener conexión viva
+      keepAliveInitialDelayMillis: 10000,
     },
 
-    // Retry de conexión (aumentado para Render cold starts)
-    retryAttempts: 5,
-    retryDelay: 5000,
+    // Retry de conexión (aumentado para Render cold starts + Supabase wake)
+    retryAttempts: 10, // Más reintentos para wake-up
+    retryDelay: 3000, // Esperar menos entre reintentos
     
     // Timeout adicional
-    connectTimeoutMS: 30000, // 30 segundos
+    connectTimeoutMS: 60000, // 60 segundos
   };
 };
