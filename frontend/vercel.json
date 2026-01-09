@@ -15,6 +15,14 @@
             "dest": "/assets/$1"
         },
         {
+            "src": "/(.*\\.csv)",
+            "dest": "/$1",
+            "headers": {
+                "Content-Type": "text/csv; charset=utf-8",
+                "Content-Disposition": "attachment"
+            }
+        },
+        {
             "src": "/(.*)",
             "dest": "/index.html"
         }
