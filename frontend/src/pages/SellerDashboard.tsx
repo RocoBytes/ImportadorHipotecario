@@ -196,10 +196,6 @@ const SellerDashboard: React.FC = () => {
     }
   };
 
-  const formatBoolean = (value: boolean): string => {
-    return value ? 'Sí' : 'No';
-  };
-
   const exportToExcel = () => {
     // Preparar datos solo con las columnas visibles
     const dataToExport = filteredOperations.map(op => ({
