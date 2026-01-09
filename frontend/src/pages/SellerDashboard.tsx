@@ -63,7 +63,6 @@ interface Operation {
   notaria: string;
   agenciaBroker: string;
   abogado: string;
-  prontoPago: boolean;
   rol: string;
   caratula: string;
   caratulaEndoso: string;
@@ -217,7 +216,6 @@ const SellerDashboard: React.FC = () => {
       'Crédito Total': op.creditoTotal || 0,
       'Banco Alzante': op.bancoAlzante || '-',
       'Repertorio': op.repertorio || '-',
-      'Pronto Pago': formatBoolean(op.prontoPago),
       'Carátula': op.caratula || '-',
       'Estado Actual': op.estadoActual || '-',
       'Firma Cliente Inicio': formatDate(op.firmaClienteInicio),
@@ -406,7 +404,6 @@ const SellerDashboard: React.FC = () => {
                           {/* Otros datos visibles */}
                           <th className="px-3 py-3.5 text-left text-xs font-semibold text-gray-900">Banco Alzante</th>
                           <th className="px-3 py-3.5 text-left text-xs font-semibold text-gray-900">Repertorio</th>
-                          <th className="px-3 py-3.5 text-left text-xs font-semibold text-gray-900">Pronto Pago</th>
                           <th className="px-3 py-3.5 text-left text-xs font-semibold text-gray-900">Carátula</th>
                           <th className="px-3 py-3.5 text-left text-xs font-semibold text-gray-900">Estado Actual</th>
                           
@@ -457,7 +454,6 @@ const SellerDashboard: React.FC = () => {
                             {/* Otros datos visibles */}
                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{op.bancoAlzante || '-'}</td>
                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{op.repertorio || '-'}</td>
-                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{formatBoolean(op.prontoPago)}</td>
                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{op.caratula || '-'}</td>
                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{op.estadoActual || '-'}</td>
                             
